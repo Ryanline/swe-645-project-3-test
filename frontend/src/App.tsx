@@ -151,7 +151,7 @@ function App() {
       <div className="w3-top">
         <div className="w3-bar w3-white w3-wide w3-padding w3-card">
           <a href="#home" className="w3-bar-item w3-button">
-            <b>SWE 645</b> Assignment 1
+            <b>SWE 645</b> Assignment 3
           </a>
           <div className="w3-right w3-hide-small">
             <a href="#home" className="w3-bar-item w3-button">
@@ -177,7 +177,7 @@ function App() {
             <span className="w3-padding w3-black w3-opacity-min">
               <b>SWE 645</b>
             </span>{" "}
-            <span className="w3-hide-small w3-text-light-grey">Assignment 1</span>
+            <span className="w3-hide-small w3-text-light-grey">Assignment 3</span>
           </h1>
         </div>
       </header>
