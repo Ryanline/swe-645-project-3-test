@@ -433,6 +433,54 @@ Use these commands as the starting point for the AWS-hosted run. Replace placeho
 5. Prepare the demo video checklist.
 6. Zip the final submission contents.
 
+### Phase 7: Teardown
+
+Use this section when you are done practicing and want to stop AWS charges.
+
+1. Delete the application Helm release.
+   ```powershell
+   helm uninstall student-survey-release
+   ```
+2. Delete the ingress controller Helm release.
+   ```powershell
+   helm uninstall ingress-nginx --namespace ingress-nginx
+   ```
+3. Confirm Kubernetes load balancers and pods are gone.
+   ```powershell
+   kubectl get all -A
+   ```
+4. Delete the RDS instance. Replace `--skip-final-snapshot` only if you intentionally want a final snapshot.
+   ```powershell
+   aws rds delete-db-instance --region us-east-1 --db-instance-identifier swe645-project3-mysql --skip-final-snapshot --delete-automated-backups
+   ```
+5. Wait until the RDS instance is gone.
+   ```powershell
+   aws rds wait db-instance-deleted --region us-east-1 --db-instance-identifier swe645-project3-mysql
+   ```
+6. Delete the RDS DB subnet group.
+   ```powershell
+   aws rds delete-db-subnet-group --region us-east-1 --db-subnet-group-name swe645-project3-db-subnets
+   ```
+7. Delete the RDS security group.
+   ```powershell
+   aws ec2 delete-security-group --region us-east-1 --group-id sg-0024f4cd9a38e3ca1
+   ```
+8. Delete the EKS cluster.
+   ```powershell
+   eksctl delete cluster --name swe645-project3-cluster --region us-east-1
+   ```
+9. Release the Elastic IPs after the ingress load balancer is fully gone.
+   ```powershell
+   aws ec2 release-address --region us-east-1 --allocation-id eipalloc-08319e05489b4cd69
+   aws ec2 release-address --region us-east-1 --allocation-id eipalloc-01f506c542404a359
+   ```
+10. If you want to clean up the container registry too, delete the ECR repositories.
+   ```powershell
+   aws ecr delete-repository --region us-east-1 --repository-name student-survey-frontend --force
+   aws ecr delete-repository --region us-east-1 --repository-name student-survey-backend --force
+   ```
+11. Verify that no practice resources remain in the account before ending the session.
+
 ## Manual Steps Log
 
 This section will be updated with exact user-performed steps as we go.
