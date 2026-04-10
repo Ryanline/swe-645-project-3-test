@@ -1,0 +1,6 @@
+apiVersion: v2
+name: student-survey
+description: Helm chart for the SWE 645 Project 3 student survey application.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

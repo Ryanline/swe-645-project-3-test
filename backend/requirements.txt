@@ -1,0 +1,9 @@
+# This file lists the Python packages needed to run the Project 3 backend API.
+# It supports FastAPI, SQLModel persistence, and MySQL connectivity for deployment.
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+sqlmodel==0.0.24
+pymysql==1.1.1
+python-dotenv==1.1.1
+email-validator==2.3.0
+cryptography==45.0.7

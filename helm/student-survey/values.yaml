@@ -1,0 +1,32 @@
+# This values file controls image locations, environment variables, and service exposure.
+# It is designed for local templating first and EKS deployment once AWS resources exist.
+frontend:
+  replicaCount: 1
+  image:
+    repository: 390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+
+backend:
+  replicaCount: 1
+  image:
+    repository: 390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    allowedOrigins: http://localhost:5173,http://127.0.0.1:5173
+
+database:
+  url: mysql+pymysql://adminuser:REPLACE_DB_PASSWORD@REPLACE_DB_HOST:3306/student_surveys
+
+ingress:
+  enabled: true
+  className: nginx
+  host: ""
+  annotations: {}
