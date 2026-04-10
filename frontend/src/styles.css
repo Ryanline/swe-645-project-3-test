@@ -1,9 +1,9 @@
-/* This stylesheet adapts the Project 3 React frontend to the older survey site's visual language. */
-/* It keeps the assignment's CRUD functionality while restoring a classic academic survey look. */
+/* This stylesheet follows the visual language of the Assignment 1 architect template from swetest2. */
+/* It keeps Project 3 CRUD behavior while restoring the older W3.css-inspired layout and hero image feel. */
 :root {
-  font-family: "Trebuchet MS", Verdana, sans-serif;
-  color: #1c2430;
-  background: #dfe7f0;
+  font-family: Verdana, sans-serif;
+  color: #111;
+  background: #f1f1f1;
   line-height: 1.5;
   font-weight: 400;
 }
@@ -20,15 +20,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background:
-    linear-gradient(rgba(233, 239, 247, 0.94), rgba(233, 239, 247, 0.94)),
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.35),
-      rgba(255, 255, 255, 0.35) 1px,
-      transparent 1px,
-      transparent 28px
-    );
+  background: #f1f1f1;
 }
 
 button,
@@ -39,6 +31,7 @@ select {
 
 a {
   color: inherit;
+  text-decoration: none;
 }
 
 #root {
@@ -46,95 +39,119 @@ a {
 }
 
 .page-shell {
-  width: min(1180px, calc(100% - 1.5rem));
+  width: 100%;
+}
+
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+}
+
+.top-nav-inner {
+  max-width: 1564px;
   margin: 0 auto;
-  padding: 1rem 0 2rem;
-}
-
-.site-header {
-  margin-bottom: 1rem;
-  border: 1px solid #1f4f80;
-  background: linear-gradient(180deg, #2d6ea3, #1f4f80);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(22, 44, 70, 0.18);
-}
-
-.site-header-inner {
+  padding: 0.6rem 1rem;
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
-  padding: 1.25rem 1.5rem;
 }
 
-.site-kicker {
-  margin: 0 0 0.3rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #d7e8f7;
+.brand-link,
+.nav-links a {
+  padding: 0.45rem 0.85rem;
+  letter-spacing: 0.04em;
 }
 
-.site-header h1 {
+.brand-link:hover,
+.nav-links a:hover {
+  background: #ccc;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.hero-banner {
+  position: relative;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.hero-image {
+  display: block;
+  width: 100%;
+  max-height: 800px;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-overlay h1 {
   margin: 0;
-  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  color: #f1f1f1;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
-.site-copy {
-  margin: 0.45rem 0 0;
-  max-width: 58ch;
-  color: #eef6fd;
-}
-
-.home-link {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.12);
-  padding: 0.65rem 1rem;
-  text-decoration: none;
+.hero-mark {
+  display: inline-block;
+  margin-right: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
   font-weight: 700;
-  white-space: nowrap;
 }
 
-.notice {
-  margin-bottom: 1rem;
-  padding: 0.85rem 1rem;
-  border-left: 4px solid;
-  background: #fff;
-  box-shadow: 0 3px 10px rgba(21, 35, 53, 0.08);
+.hero-title {
+  color: #e5e7eb;
 }
 
-.notice-success {
-  border-color: #2f855a;
-  color: #21543b;
+.intro-block,
+.content-section {
+  max-width: 1564px;
+  margin: 0 auto;
 }
 
-.notice-error {
-  border-color: #c53030;
-  color: #7f1d1d;
+.intro-block {
+  padding: 2rem 1rem 0;
 }
 
 .layout-grid {
+  max-width: 1564px;
+  margin: 0 auto;
+  padding: 1rem;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 1.5rem;
   align-items: start;
 }
 
-.panel {
-  background: #fff;
-  border: 1px solid #b8c5d4;
-  box-shadow: 0 10px 22px rgba(34, 54, 78, 0.08);
+.content-section {
+  padding: 0;
 }
 
-.survey-panel {
-  padding: 1.25rem 1.25rem 1.4rem;
+.section-heading {
+  margin: 0 0 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #d3d3d3;
+  font-size: 1.5rem;
+  font-weight: 400;
 }
 
-.archive-panel {
-  padding: 1.25rem;
-}
-
-.panel-heading {
+.panel-header {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -142,197 +159,175 @@ a {
   margin-bottom: 1rem;
 }
 
-.section-label {
-  margin: 0 0 0.25rem;
-  color: #2d6ea3;
-  font-size: 0.84rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.panel-copy,
+.intro-block p {
+  margin: 0;
+  color: #444;
 }
 
-.section-copy {
-  margin: 0.35rem 0 0;
-  max-width: 55ch;
-  color: #4d5e71;
+.notice {
+  max-width: 1564px;
+  margin: 1rem auto 0;
+  padding: 0.9rem 1rem;
+  background: #fff;
+  border-left: 4px solid;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
-.survey-form {
-  display: grid;
-  gap: 1rem;
+.notice-success {
+  border-color: #2e7d32;
+  color: #1f5a24;
 }
 
-.form-section {
-  display: grid;
-  gap: 0.85rem;
+.notice-error {
+  border-color: #c62828;
+  color: #7f1d1d;
 }
 
-.section-divider {
-  border-top: 3px solid #d6e0ea;
-  padding-top: 0.7rem;
-}
-
-.section-divider span {
-  display: inline-block;
-  color: #23496f;
-  font-weight: 700;
+.survey-form-card {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .field-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.9rem 1rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.span-2 {
-  grid-column: span 2;
-}
-
-label,
-fieldset {
-  display: grid;
-  gap: 0.4rem;
+.field-grid.thirds {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 label {
-  color: #243446;
-  font-weight: 600;
-}
-
-.legacy-fieldset {
-  margin: 0;
-  padding: 0.9rem 1rem 1rem;
-  border: 1px solid #cad5df;
-  background: #f8fbfd;
-}
-
-legend {
-  padding: 0 0.35rem;
-  font-weight: 700;
-  color: #23496f;
+  display: grid;
+  gap: 0.35rem;
 }
 
 input,
 select {
   width: 100%;
-  min-height: 42px;
-  border: 1px solid #b7c6d6;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #ccc;
   background: #fff;
-  padding: 0.65rem 0.75rem;
-  border-radius: 2px;
 }
 
 input:focus,
 select:focus {
-  outline: 2px solid #7ba9cf;
+  outline: 2px solid #999;
   outline-offset: 1px;
 }
 
-.option-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem 1rem;
+hr {
+  border: 0;
+  border-top: 1px solid #d3d3d3;
+  margin: 1rem 0;
 }
 
-.option-row {
+.form-block p {
+  margin: 0 0 0.6rem;
+}
+
+.option-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem 1rem;
+}
+
+.radio-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.8rem 1rem;
+  gap: 0.75rem 1rem;
 }
 
 .check-option {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font-weight: 500;
-  color: #203244;
 }
 
 .check-option input {
   width: auto;
-  min-height: auto;
   margin: 0;
 }
 
 .select-label {
-  max-width: 340px;
+  max-width: 420px;
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  padding-top: 0.2rem;
+  margin-top: 1rem;
 }
 
 .primary-button,
 .secondary-button {
-  min-width: 132px;
-  border: 1px solid transparent;
-  padding: 0.72rem 1rem;
+  border: none;
+  padding: 0.7rem 1.1rem;
   cursor: pointer;
-  font-weight: 700;
 }
 
 .primary-button {
-  background: #2d6ea3;
-  border-color: #235781;
+  background: #000;
   color: #fff;
 }
 
 .secondary-button {
-  background: #edf2f7;
-  border-color: #b8c5d4;
-  color: #213547;
+  background: #d9d9d9;
+  color: #111;
 }
 
 .danger-button {
-  background: #fff2f2;
-  border-color: #efb9b9;
-  color: #9b2c2c;
+  background: #f0d4d4;
+  color: #7a1717;
 }
 
 .primary-button:hover,
 .secondary-button:hover {
-  filter: brightness(0.98);
+  opacity: 0.88;
 }
 
 .survey-list {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .survey-card {
-  border: 1px solid #cad5df;
-  background: #fbfdff;
-  padding: 0.95rem;
+  background: #fff;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .survey-card-header {
   display: flex;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.8rem;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
 }
 
-.survey-card h3 {
+.survey-card h4 {
   margin: 0;
-  color: #1d3f61;
+  font-size: 1.1rem;
 }
 
-.survey-card p {
-  margin: 0.2rem 0 0;
-  color: #5a6c7e;
+.survey-card-header p {
+  margin: 0.25rem 0 0;
+  color: #555;
 }
 
 .survey-id {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.55rem;
-  border: 1px solid #b8c5d4;
-  background: #eef4fa;
+  height: fit-content;
+  padding: 0.15rem 0.45rem;
+  background: #000;
+  color: #fff;
   font-weight: 700;
-  color: #24496d;
 }
 
 dl {
@@ -342,41 +337,48 @@ dl {
 }
 
 dt {
-  color: #23496f;
   font-weight: 700;
 }
 
 dd {
   margin: 0.15rem 0 0;
-  color: #405366;
+  color: #444;
 }
 
 .empty-state {
+  background: #fff;
   padding: 1rem;
-  border: 1px dashed #b8c5d4;
-  background: #f8fbfd;
-  color: #4d5e71;
+  border: 1px solid #ddd;
 }
 
-@media (max-width: 960px) {
+.site-footer {
+  margin-top: 2rem;
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+@media (max-width: 980px) {
   .layout-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 720px) {
-  .site-header-inner,
-  .panel-heading,
+@media (max-width: 760px) {
+  .top-nav-inner,
+  .panel-header,
   .survey-card-header {
     flex-direction: column;
   }
 
   .field-grid,
-  .option-grid {
+  .field-grid.thirds,
+  .option-columns {
     grid-template-columns: 1fr;
-  }
-
-  .span-2 {
-    grid-column: span 1;
   }
 }

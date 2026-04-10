@@ -1,5 +1,5 @@
 // This file implements the React UI for creating, listing, editing, and deleting surveys.
-// It uses functional components and hooks to satisfy the project's CRUD requirements.
+// It preserves the Project 3 functionality while visually following the Assignment 1 architect template.
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
@@ -131,33 +131,51 @@ function App() {
 
   return (
     <main className="page-shell">
-      <header className="site-header">
-        <div className="site-header-inner">
-          <div>
-            <p className="site-kicker">SWE 645 Assignment 3</p>
-            <h1>Student Survey</h1>
-            <p className="site-copy">
-              Please complete the survey below. Fields marked with <strong>*</strong> are
-              required.
-            </p>
-          </div>
-          <a className="home-link" href="#survey-form">
-            Survey Form
+      <div className="top-nav">
+        <div className="top-nav-inner">
+          <a className="brand-link" href="#home">
+            <b>SWE 645</b> Assignment 3
           </a>
+          <div className="nav-links">
+            <a href="#survey-form">Student Survey</a>
+            <a href="#survey-archive">Survey Archive</a>
+          </div>
+        </div>
+      </div>
+
+      <header className="hero-banner" id="home">
+        <img
+          alt="Architecture"
+          className="hero-image"
+          src="https://www.w3schools.com/w3images/architect.jpg"
+        />
+        <div className="hero-overlay">
+          <h1>
+            <span className="hero-mark">SWE 645</span>
+            <span className="hero-title">Project 3</span>
+          </h1>
         </div>
       </header>
+
+      <section className="content-section intro-block">
+        <h3 className="section-heading">Student Survey</h3>
+        <p>
+          Please complete the survey below. This Project 3 version keeps the older architect-style
+          look while extending the page into a full CRUD web application.
+        </p>
+      </section>
 
       {notice ? <div className={`notice notice-${notice.tone}`}>{notice.text}</div> : null}
 
       <section className="layout-grid">
-        <article className="panel survey-panel" id="survey-form">
-          <div className="panel-heading">
+        <article className="content-section" id="survey-form">
+          <div className="panel-header">
             <div>
-              <p className="section-label">Student Survey Form</p>
-              <h2>{editingId === null ? "Campus Visit Feedback" : `Edit Survey #${editingId}`}</h2>
-              <p className="section-copy">
-                This form keeps the original survey feel while adding the CRUD workflow required
-                for Project 3.
+              <h3 className="section-heading">Student Survey</h3>
+              <p className="panel-copy">
+                {editingId === null
+                  ? "Please complete the survey below. Fields marked with * are required."
+                  : `You are editing survey #${editingId}.`}
               </p>
             </div>
             {editingId !== null ? (
@@ -167,15 +185,10 @@ function App() {
             ) : null}
           </div>
 
-          <form className="survey-form" onSubmit={handleSubmit}>
-            <section className="form-section">
-              <div className="section-divider">
-                <span>Required Student Information</span>
-              </div>
-
+          <form className="survey-form-card" onSubmit={handleSubmit}>
             <div className="field-grid">
               <label>
-                First Name *
+                <b>First Name *</b>
                 <input
                   required
                   value={formData.first_name}
@@ -183,15 +196,18 @@ function App() {
                 />
               </label>
               <label>
-                Last Name *
+                <b>Last Name *</b>
                 <input
                   required
                   value={formData.last_name}
                   onChange={(event) => updateField("last_name", event.target.value)}
                 />
               </label>
-              <label className="span-2">
-                Street Address *
+            </div>
+
+            <div className="field-grid">
+              <label>
+                <b>Street Address *</b>
                 <input
                   required
                   value={formData.street_address}
@@ -199,15 +215,18 @@ function App() {
                 />
               </label>
               <label>
-                City *
+                <b>City *</b>
                 <input required value={formData.city} onChange={(event) => updateField("city", event.target.value)} />
               </label>
+            </div>
+
+            <div className="field-grid thirds">
               <label>
-                State *
+                <b>State *</b>
                 <input required value={formData.state} onChange={(event) => updateField("state", event.target.value)} />
               </label>
               <label>
-                ZIP *
+                <b>ZIP *</b>
                 <input
                   required
                   value={formData.zip_code}
@@ -215,24 +234,7 @@ function App() {
                 />
               </label>
               <label>
-                Telephone *
-                <input
-                  required
-                  value={formData.telephone}
-                  onChange={(event) => updateField("telephone", event.target.value)}
-                />
-              </label>
-              <label>
-                E-mail *
-                <input
-                  required
-                  type="email"
-                  value={formData.email}
-                  onChange={(event) => updateField("email", event.target.value)}
-                />
-              </label>
-              <label>
-                Date of Survey *
+                <b>Date of Survey *</b>
                 <input
                   required
                   type="date"
@@ -241,16 +243,34 @@ function App() {
                 />
               </label>
             </div>
-            </section>
 
-            <section className="form-section">
-              <div className="section-divider">
-                <span>Campus Experience</span>
-              </div>
+            <div className="field-grid">
+              <label>
+                <b>Telephone *</b>
+                <input
+                  required
+                  value={formData.telephone}
+                  onChange={(event) => updateField("telephone", event.target.value)}
+                />
+              </label>
+              <label>
+                <b>E-mail *</b>
+                <input
+                  required
+                  type="email"
+                  value={formData.email}
+                  onChange={(event) => updateField("email", event.target.value)}
+                />
+              </label>
+            </div>
 
-            <fieldset className="legacy-fieldset">
-              <legend>What did you like most about the campus?</legend>
-              <div className="option-grid">
+            <hr />
+
+            <div className="form-block">
+              <p>
+                <b>What did you like most about the campus?</b>
+              </p>
+              <div className="option-columns">
                 {likedMostOptions.map((option) => (
                   <label className="check-option" key={option}>
                     <input
@@ -262,32 +282,33 @@ function App() {
                   </label>
                 ))}
               </div>
-            </fieldset>
+            </div>
 
-            <fieldset className="legacy-fieldset">
-              <legend>How did you become interested in the university?</legend>
-              <div className="option-row">
+            <hr />
+
+            <div className="form-block">
+              <p>
+                <b>How did you become interested in the university?</b>
+              </p>
+              <div className="radio-row">
                 {interestSourceOptions.map((option) => (
                   <label className="check-option" key={option}>
                     <input
-                      type="checkbox"
+                      type="radio"
+                      name="interest_source"
                       checked={formData.interest_source.includes(option)}
-                      onChange={() => toggleListValue("interest_source", option)}
+                      onChange={() => updateField("interest_source", [option])}
                     />
                     <span>{option}</span>
                   </label>
                 ))}
               </div>
-            </fieldset>
-            </section>
+            </div>
 
-            <section className="form-section">
-              <div className="section-divider">
-                <span>Recommendation</span>
-              </div>
+            <hr />
 
             <label className="select-label">
-              Likelihood of recommending this school
+              <b>Likelihood of recommending this school</b>
               <select
                 required
                 value={formData.recommendation_likelihood}
@@ -300,27 +321,25 @@ function App() {
                 ))}
               </select>
             </label>
-            </section>
 
             <div className="actions">
               <button className="primary-button" disabled={isSubmitting} type="submit">
-                {isSubmitting ? "Saving..." : editingId === null ? "Submit Survey" : "Update Survey"}
+                {isSubmitting ? "Saving..." : editingId === null ? "Submit" : "Update"}
               </button>
               <button className="secondary-button" onClick={resetForm} type="button">
-                Reset
+                Cancel
               </button>
             </div>
           </form>
         </article>
 
-        <article className="panel archive-panel">
-          <div className="panel-heading">
+        <article className="content-section" id="survey-archive">
+          <div className="panel-header">
             <div>
-              <p className="section-label">Recorded Responses</p>
-              <h2>Survey Archive</h2>
-              <p className="section-copy">
-                Project 3 extends the original static survey into a full CRUD application by
-                letting us review, edit, and delete submissions.
+              <h3 className="section-heading">Survey Archive</h3>
+              <p className="panel-copy">
+                This is the Project 3 addition that turns the old static page into a persistent CRUD
+                application.
               </p>
             </div>
             <button className="secondary-button" type="button" onClick={() => void loadSurveys()}>
@@ -341,9 +360,9 @@ function App() {
               <section className="survey-card" key={survey.id}>
                 <div className="survey-card-header">
                   <div>
-                    <h3>
+                    <h4>
                       {survey.first_name} {survey.last_name}
-                    </h3>
+                    </h4>
                     <p>
                       {survey.city}, {survey.state}
                     </p>
@@ -353,11 +372,11 @@ function App() {
 
                 <dl>
                   <div>
-                    <dt>Address</dt>
+                    <dt>Street Address</dt>
                     <dd>{survey.street_address}</dd>
                   </div>
                   <div>
-                    <dt>Email</dt>
+                    <dt>E-mail</dt>
                     <dd>{survey.email}</dd>
                   </div>
                   <div>
@@ -365,7 +384,7 @@ function App() {
                     <dd>{survey.telephone}</dd>
                   </div>
                   <div>
-                    <dt>Survey Date</dt>
+                    <dt>Date of Survey</dt>
                     <dd>{survey.survey_date}</dd>
                   </div>
                   <div>
@@ -395,6 +414,10 @@ function App() {
           </div>
         </article>
       </section>
+
+      <footer className="site-footer">
+        <p>Powered by React, FastAPI, SQLModel, Kubernetes, and the architect-style Assignment 1 visual theme.</p>
+      </footer>
     </main>
   );
 }
