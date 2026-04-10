@@ -14,6 +14,8 @@ export type SurveyFormData = {
   liked_most: string[];
   interest_source: string[];
   recommendation_likelihood: string;
+  raffle?: string;
+  comments?: string;
 };
 
 export const emptySurvey: SurveyFormData = {
@@ -28,5 +30,7 @@ export const emptySurvey: SurveyFormData = {
   survey_date: "",
   liked_most: [],
   interest_source: [],
-  recommendation_likelihood: "Likely",
+  recommendation_likelihood: "",
+  raffle: "",
+  comments: "",
 };

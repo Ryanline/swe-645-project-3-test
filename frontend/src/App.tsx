@@ -1,13 +1,27 @@
-// This file implements the React UI for creating, listing, editing, and deleting surveys.
-// It preserves the Project 3 functionality while visually following the Assignment 1 architect template.
+// This file renders a React translation of the original Assignment 1 survey page.
+// It keeps the older W3.CSS structure while layering in the Project 3 CRUD behavior.
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
 import { createSurvey, deleteSurvey, fetchSurveys, updateSurvey } from "./api";
 import { emptySurvey, type SurveyFormData } from "./types";
 
-const likedMostOptions = ["students", "location", "campus", "atmosphere", "dorm rooms", "sports"];
-const interestSourceOptions = ["friends", "television", "Internet", "other"];
+const likedMostOptions = [
+  { value: "students", label: "Students" },
+  { value: "location", label: "Location" },
+  { value: "campus", label: "Campus" },
+  { value: "atmosphere", label: "Atmosphere" },
+  { value: "dorm rooms", label: "Dorm Rooms" },
+  { value: "sports", label: "Sports" },
+];
+
+const interestSourceOptions = [
+  { value: "friends", label: "Friends" },
+  { value: "television", label: "Television" },
+  { value: "Internet", label: "Internet" },
+  { value: "other", label: "Other" },
+];
+
 const recommendationOptions = ["Very Likely", "Likely", "Unlikely"];
 
 type Notice = {
@@ -53,15 +67,15 @@ function App() {
     });
   }
 
-  function toggleListValue(field: "liked_most" | "interest_source", value: string) {
+  function toggleLikedMost(value: string) {
     setFormData((current) => {
-      const nextValues = current[field].includes(value)
-        ? current[field].filter((item) => item !== value)
-        : [...current[field], value];
+      const nextValues = current.liked_most.includes(value)
+        ? current.liked_most.filter((item) => item !== value)
+        : [...current.liked_most, value];
 
       return {
         ...current,
-        [field]: nextValues,
+        liked_most: nextValues,
       };
     });
   }
@@ -123,226 +137,334 @@ function App() {
   function startEdit(survey: SurveyFormData) {
     setEditingId(survey.id ?? null);
     setFormData({
+      ...emptySurvey,
       ...survey,
       survey_date: survey.survey_date.slice(0, 10),
+      raffle: survey.raffle ?? "",
+      comments: survey.comments ?? "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
-    <main className="page-shell">
-      <div className="top-nav">
-        <div className="top-nav-inner">
-          <a className="brand-link" href="#home">
-            <b>SWE 645</b> Assignment 3
+    <main className="assignment-page">
+      <div className="w3-top">
+        <div className="w3-bar w3-white w3-wide w3-padding w3-card">
+          <a href="#home" className="w3-bar-item w3-button">
+            <b>SWE 645</b> Assignment 1
           </a>
-          <div className="nav-links">
-            <a href="#survey-form">Student Survey</a>
-            <a href="#survey-archive">Survey Archive</a>
+          <div className="w3-right w3-hide-small">
+            <a href="#home" className="w3-bar-item w3-button">
+              Home
+            </a>
+            <a href="#archive" className="w3-bar-item w3-button">
+              Archive
+            </a>
           </div>
         </div>
       </div>
 
-      <header className="hero-banner" id="home">
+      <header className="w3-display-container w3-content w3-wide" style={{ maxWidth: "1500px" }} id="home">
         <img
-          alt="Architecture"
-          className="hero-image"
+          className="w3-image"
           src="https://www.w3schools.com/w3images/architect.jpg"
+          alt="Architecture"
+          width="1500"
+          height="800"
         />
-        <div className="hero-overlay">
-          <h1>
-            <span className="hero-mark">SWE 645</span>
-            <span className="hero-title">Project 3</span>
+        <div className="w3-display-middle w3-margin-top w3-center">
+          <h1 className="w3-xxlarge w3-text-white">
+            <span className="w3-padding w3-black w3-opacity-min">
+              <b>SWE 645</b>
+            </span>{" "}
+            <span className="w3-hide-small w3-text-light-grey">Assignment 1</span>
           </h1>
         </div>
       </header>
 
-      <section className="content-section intro-block">
-        <h3 className="section-heading">Student Survey</h3>
-        <p>
-          Please complete the survey below. This Project 3 version keeps the older architect-style
-          look while extending the page into a full CRUD web application.
-        </p>
-      </section>
+      <div className="w3-content w3-padding" style={{ maxWidth: "1564px" }}>
+        <div className="w3-container w3-padding-32" id="survey">
+          <h3 className="w3-border-bottom w3-border-light-grey w3-padding-16">Student Survey</h3>
+          <p>
+            {editingId === null
+              ? "Please complete the survey below. Fields marked with * are required."
+              : `Please complete the survey below. You are editing survey #${editingId}.`}
+          </p>
 
-      {notice ? <div className={`notice notice-${notice.tone}`}>{notice.text}</div> : null}
-
-      <section className="layout-grid">
-        <article className="content-section" id="survey-form">
-          <div className="panel-header">
-            <div>
-              <h3 className="section-heading">Student Survey</h3>
-              <p className="panel-copy">
-                {editingId === null
-                  ? "Please complete the survey below. Fields marked with * are required."
-                  : `You are editing survey #${editingId}.`}
-              </p>
+          {notice ? (
+            <div
+              className={
+                notice.tone === "success"
+                  ? "w3-panel w3-pale-green w3-leftbar w3-border-green"
+                  : "w3-panel w3-pale-red w3-leftbar w3-border-red"
+              }
+            >
+              <p>{notice.text}</p>
             </div>
-            {editingId !== null ? (
-              <button className="secondary-button" type="button" onClick={resetForm}>
-                Cancel Edit
-              </button>
-            ) : null}
-          </div>
+          ) : null}
 
-          <form className="survey-form-card" onSubmit={handleSubmit}>
-            <div className="field-grid">
-              <label>
-                <b>First Name *</b>
+          <form className="w3-container w3-card w3-white w3-padding-16 w3-round-large" onSubmit={handleSubmit}>
+            <div className="w3-row-padding">
+              <div className="w3-half">
+                <label>
+                  <b>First Name *</b>
+                </label>
                 <input
+                  className="w3-input w3-border"
+                  type="text"
                   required
                   value={formData.first_name}
                   onChange={(event) => updateField("first_name", event.target.value)}
                 />
-              </label>
-              <label>
-                <b>Last Name *</b>
+              </div>
+              <div className="w3-half">
+                <label>
+                  <b>Last Name *</b>
+                </label>
                 <input
+                  className="w3-input w3-border"
+                  type="text"
                   required
                   value={formData.last_name}
                   onChange={(event) => updateField("last_name", event.target.value)}
                 />
-              </label>
+              </div>
             </div>
 
-            <div className="field-grid">
-              <label>
-                <b>Street Address *</b>
+            <div className="w3-row-padding w3-margin-top">
+              <div className="w3-half">
+                <label>
+                  <b>Street Address *</b>
+                </label>
                 <input
+                  className="w3-input w3-border"
+                  type="text"
                   required
                   value={formData.street_address}
                   onChange={(event) => updateField("street_address", event.target.value)}
                 />
-              </label>
-              <label>
-                <b>City *</b>
-                <input required value={formData.city} onChange={(event) => updateField("city", event.target.value)} />
-              </label>
+              </div>
+              <div className="w3-half">
+                <label>
+                  <b>City *</b>
+                </label>
+                <input
+                  className="w3-input w3-border"
+                  type="text"
+                  required
+                  value={formData.city}
+                  onChange={(event) => updateField("city", event.target.value)}
+                />
+              </div>
             </div>
 
-            <div className="field-grid thirds">
-              <label>
-                <b>State *</b>
-                <input required value={formData.state} onChange={(event) => updateField("state", event.target.value)} />
-              </label>
-              <label>
-                <b>ZIP *</b>
+            <div className="w3-row-padding w3-margin-top">
+              <div className="w3-third">
+                <label>
+                  <b>State *</b>
+                </label>
                 <input
+                  className="w3-input w3-border"
+                  type="text"
+                  required
+                  value={formData.state}
+                  onChange={(event) => updateField("state", event.target.value)}
+                />
+              </div>
+              <div className="w3-third">
+                <label>
+                  <b>ZIP *</b>
+                </label>
+                <input
+                  className="w3-input w3-border"
+                  type="text"
                   required
                   value={formData.zip_code}
                   onChange={(event) => updateField("zip_code", event.target.value)}
                 />
-              </label>
-              <label>
-                <b>Date of Survey *</b>
+              </div>
+              <div className="w3-third">
+                <label>
+                  <b>Date of Survey *</b>
+                </label>
                 <input
-                  required
+                  className="w3-input w3-border"
                   type="date"
+                  required
                   value={formData.survey_date}
                   onChange={(event) => updateField("survey_date", event.target.value)}
                 />
-              </label>
+              </div>
             </div>
 
-            <div className="field-grid">
-              <label>
-                <b>Telephone *</b>
+            <div className="w3-row-padding w3-margin-top">
+              <div className="w3-half">
+                <label>
+                  <b>Telephone *</b>
+                </label>
                 <input
+                  className="w3-input w3-border"
+                  type="tel"
+                  placeholder="e.g., 555-555-5555"
                   required
                   value={formData.telephone}
                   onChange={(event) => updateField("telephone", event.target.value)}
                 />
-              </label>
-              <label>
-                <b>E-mail *</b>
+              </div>
+              <div className="w3-half">
+                <label>
+                  <b>E-mail *</b>
+                </label>
                 <input
-                  required
+                  className="w3-input w3-border"
                   type="email"
+                  placeholder="name@example.com"
+                  required
                   value={formData.email}
                   onChange={(event) => updateField("email", event.target.value)}
                 />
-              </label>
+              </div>
             </div>
 
-            <hr />
+            <hr className="w3-margin-top w3-margin-bottom" />
 
-            <div className="form-block">
-              <p>
-                <b>What did you like most about the campus?</b>
-              </p>
-              <div className="option-columns">
-                {likedMostOptions.map((option) => (
-                  <label className="check-option" key={option}>
+            <p>
+              <b>What did you like most about the campus?</b>
+            </p>
+            <div className="w3-row-padding">
+              <div className="w3-third">
+                {likedMostOptions.slice(0, 2).map((option) => (
+                  <label className="survey-choice" key={option.value}>
                     <input
+                      className="w3-check"
                       type="checkbox"
-                      checked={formData.liked_most.includes(option)}
-                      onChange={() => toggleListValue("liked_most", option)}
-                    />
-                    <span>{option}</span>
+                      checked={formData.liked_most.includes(option.value)}
+                      onChange={() => toggleLikedMost(option.value)}
+                    />{" "}
+                    {option.label}
                   </label>
                 ))}
               </div>
-            </div>
-
-            <hr />
-
-            <div className="form-block">
-              <p>
-                <b>How did you become interested in the university?</b>
-              </p>
-              <div className="radio-row">
-                {interestSourceOptions.map((option) => (
-                  <label className="check-option" key={option}>
+              <div className="w3-third">
+                {likedMostOptions.slice(2, 4).map((option) => (
+                  <label className="survey-choice" key={option.value}>
                     <input
-                      type="radio"
-                      name="interest_source"
-                      checked={formData.interest_source.includes(option)}
-                      onChange={() => updateField("interest_source", [option])}
-                    />
-                    <span>{option}</span>
+                      className="w3-check"
+                      type="checkbox"
+                      checked={formData.liked_most.includes(option.value)}
+                      onChange={() => toggleLikedMost(option.value)}
+                    />{" "}
+                    {option.label}
+                  </label>
+                ))}
+              </div>
+              <div className="w3-third">
+                {likedMostOptions.slice(4).map((option) => (
+                  <label className="survey-choice" key={option.value}>
+                    <input
+                      className="w3-check"
+                      type="checkbox"
+                      checked={formData.liked_most.includes(option.value)}
+                      onChange={() => toggleLikedMost(option.value)}
+                    />{" "}
+                    {option.label}
                   </label>
                 ))}
               </div>
             </div>
 
-            <hr />
+            <hr className="w3-margin-top w3-margin-bottom" />
 
-            <label className="select-label">
+            <p>
+              <b>How did you become interested in the university?</b>
+            </p>
+            <p>
+              {interestSourceOptions.map((option) => (
+                <label className="w3-margin-right" key={option.value}>
+                  <input
+                    className="w3-radio"
+                    type="radio"
+                    name="interestSource"
+                    required={formData.interest_source.length === 0 && option.value === "friends"}
+                    checked={formData.interest_source.includes(option.value)}
+                    onChange={() => updateField("interest_source", [option.value])}
+                  />{" "}
+                  {option.label}
+                </label>
+              ))}
+            </p>
+
+            <hr className="w3-margin-top w3-margin-bottom" />
+
+            <label>
               <b>Likelihood of recommending this school</b>
-              <select
-                required
-                value={formData.recommendation_likelihood}
-                onChange={(event) => updateField("recommendation_likelihood", event.target.value)}
-              >
-                {recommendationOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
             </label>
+            <select
+              className="w3-select w3-border w3-margin-top"
+              name="recommendation"
+              required
+              value={formData.recommendation_likelihood}
+              onChange={(event) => updateField("recommendation_likelihood", event.target.value)}
+            >
+              <option value="" disabled>
+                Select one
+              </option>
+              {recommendationOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
 
-            <div className="actions">
-              <button className="primary-button" disabled={isSubmitting} type="submit">
+            <hr className="w3-margin-top w3-margin-bottom" />
+
+            <label>
+              <b>Raffle</b> (Enter at least ten comma-separated numbers from 1-100)
+            </label>
+            <input
+              className="w3-input w3-border w3-margin-top"
+              type="text"
+              placeholder="Example: 5, 12, 33, 47, 51, 63, 70, 81, 92, 100"
+              value={formData.raffle ?? ""}
+              onChange={(event) => updateField("raffle", event.target.value)}
+            />
+
+            <p className="w3-small w3-text-grey">
+              Note: This field is shown to preserve the Assignment 1 layout. It is not currently
+              stored in the Project 3 backend.
+            </p>
+
+            <label>
+              <b>Additional Comments</b>
+            </label>
+            <textarea
+              className="w3-input w3-border w3-margin-top"
+              name="comments"
+              rows={4}
+              placeholder="Optional comments..."
+              value={formData.comments ?? ""}
+              onChange={(event) => updateField("comments", event.target.value)}
+            />
+
+            <div className="w3-margin-top">
+              <button className="w3-button w3-black w3-margin-right" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : editingId === null ? "Submit" : "Update"}
               </button>
-              <button className="secondary-button" onClick={resetForm} type="button">
-                Cancel
+              <button className="w3-button w3-light-grey w3-border" type="button" onClick={resetForm}>
+                {editingId === null ? "Cancel" : "Cancel Edit"}
               </button>
             </div>
           </form>
-        </article>
+        </div>
 
-        <article className="content-section" id="survey-archive">
-          <div className="panel-header">
-            <div>
-              <h3 className="section-heading">Survey Archive</h3>
-              <p className="panel-copy">
-                This is the Project 3 addition that turns the old static page into a persistent CRUD
-                application.
-              </p>
-            </div>
-            <button className="secondary-button" type="button" onClick={() => void loadSurveys()}>
+        <div className="w3-container w3-padding-32" id="archive">
+          <h3 className="w3-border-bottom w3-border-light-grey w3-padding-16">Survey Archive</h3>
+          <div className="archive-toolbar">
+            <p className="archive-copy">
+              Project 3 adds this persistent archive so we can review, edit, and delete submitted
+              surveys.
+            </p>
+            <button className="w3-button w3-light-grey w3-border" type="button" onClick={() => void loadSurveys()}>
               Refresh
             </button>
           </div>
@@ -350,73 +472,93 @@ function App() {
           {isLoading ? <p>Loading surveys...</p> : null}
 
           {!isLoading && surveys.length === 0 ? (
-            <div className="empty-state">
+            <div className="w3-panel w3-pale-blue w3-leftbar w3-border-blue">
               <p>No surveys recorded yet. Submit the first one from the form.</p>
             </div>
           ) : null}
 
-          <div className="survey-list">
-            {surveys.map((survey) => (
-              <section className="survey-card" key={survey.id}>
-                <div className="survey-card-header">
-                  <div>
-                    <h4>
-                      {survey.first_name} {survey.last_name}
-                    </h4>
-                    <p>
-                      {survey.city}, {survey.state}
-                    </p>
-                  </div>
-                  <span className="survey-id">#{survey.id}</span>
+          {surveys.map((survey) => (
+            <section className="w3-card w3-white w3-padding-16 w3-margin-bottom archive-card" key={survey.id}>
+              <div className="archive-toolbar">
+                <div>
+                  <h4 className="archive-name">
+                    {survey.first_name} {survey.last_name}
+                  </h4>
+                  <p className="archive-copy">
+                    {survey.city}, {survey.state}
+                  </p>
                 </div>
+                <span className="w3-tag w3-black">#{survey.id}</span>
+              </div>
 
-                <dl>
-                  <div>
-                    <dt>Street Address</dt>
-                    <dd>{survey.street_address}</dd>
-                  </div>
-                  <div>
-                    <dt>E-mail</dt>
-                    <dd>{survey.email}</dd>
-                  </div>
-                  <div>
-                    <dt>Telephone</dt>
-                    <dd>{survey.telephone}</dd>
-                  </div>
-                  <div>
-                    <dt>Date of Survey</dt>
-                    <dd>{survey.survey_date}</dd>
-                  </div>
-                  <div>
-                    <dt>Liked Most</dt>
-                    <dd>{survey.liked_most.join(", ") || "No selections"}</dd>
-                  </div>
-                  <div>
-                    <dt>Interest Source</dt>
-                    <dd>{survey.interest_source.join(", ") || "No selections"}</dd>
-                  </div>
-                  <div>
-                    <dt>Recommendation</dt>
-                    <dd>{survey.recommendation_likelihood}</dd>
-                  </div>
-                </dl>
-
-                <div className="actions">
-                  <button className="primary-button" type="button" onClick={() => startEdit(survey)}>
-                    Edit
-                  </button>
-                  <button className="secondary-button danger-button" type="button" onClick={() => void handleDelete(survey.id!)}>
-                    Delete
-                  </button>
+              <div className="w3-row-padding w3-margin-top">
+                <div className="w3-half">
+                  <p>
+                    <b>Street Address</b>
+                    <br />
+                    {survey.street_address}
+                  </p>
+                  <p>
+                    <b>E-mail</b>
+                    <br />
+                    {survey.email}
+                  </p>
+                  <p>
+                    <b>Telephone</b>
+                    <br />
+                    {survey.telephone}
+                  </p>
                 </div>
-              </section>
-            ))}
-          </div>
-        </article>
-      </section>
+                <div className="w3-half">
+                  <p>
+                    <b>Date of Survey</b>
+                    <br />
+                    {survey.survey_date}
+                  </p>
+                  <p>
+                    <b>Liked Most</b>
+                    <br />
+                    {survey.liked_most.join(", ") || "No selections"}
+                  </p>
+                  <p>
+                    <b>Interest Source</b>
+                    <br />
+                    {survey.interest_source.join(", ") || "No selections"}
+                  </p>
+                  <p>
+                    <b>Recommendation</b>
+                    <br />
+                    {survey.recommendation_likelihood || "No selection"}
+                  </p>
+                </div>
+              </div>
 
-      <footer className="site-footer">
-        <p>Powered by React, FastAPI, SQLModel, Kubernetes, and the architect-style Assignment 1 visual theme.</p>
+              <div className="w3-margin-top archive-actions">
+                <button className="w3-button w3-black" type="button" onClick={() => startEdit(survey)}>
+                  Edit
+                </button>
+                <button className="w3-button w3-light-grey w3-border" type="button" onClick={() => void handleDelete(survey.id!)}>
+                  Delete
+                </button>
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+
+      <footer className="w3-center w3-black w3-padding-16">
+        <p>
+          Powered by{" "}
+          <a
+            href="https://www.w3schools.com/w3css/default.asp"
+            title="W3.CSS"
+            target="_blank"
+            rel="noreferrer"
+            className="w3-hover-text-green"
+          >
+            w3.css
+          </a>
+        </p>
       </footer>
     </main>
   );
