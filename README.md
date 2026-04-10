@@ -1,642 +1,441 @@
 # SWE 645 Project 3 Practice Runbook
 
-## Purpose
+This README is intentionally one single numbered checklist from an empty folder to the finished deployed solution. Follow it in order.
 
-This repository is a practice workspace for completing SWE 645 Homework Assignment 3 before recording a from-scratch demo video. The goal of this README is to capture every important step in order so the project can be repeated later with minimal improvisation.
+1. Create an empty folder named `swe-645-project-3-test`, open it in VS Code, and open a terminal there. At this step, we create the workspace for every source file, Dockerfile, YAML file, Helm chart, and document. Why: "The submission for this assignment should be through the Canvas website. I expect a zipped package containing the source files, configuration files, such as Dockerfile, YAML manifests, HelmChart..."
 
-## Assignment Summary
+2. Initialize Git and create `.gitignore`. Run `git init`. Create `.gitignore` with:
 
-Based on `Project-3-Instructions-Rubric.pdf`, the project requires:
+   ```gitignore
+   frontend/node_modules/
+   frontend/dist/
+   backend/__pycache__/
+   backend/app/__pycache__/
+   backend/.env
+   backend/surveys.db
+   backend/*.db
+   *.pyc
+   .practice-secrets.local.md
+   helm/student-survey/values.aws.local.yaml
+   ```
 
-1. A React frontend for the Student Survey application.
-2. A FastAPI backend using SQLModel/SQLAlchemy for REST APIs and persistence.
-3. CRUD operations for survey records.
-4. Containerization with Docker.
-5. Deployment to Kubernetes using Helm charts.
-6. Documentation and a voice-over demo video.
+   At this step, we keep generated files and secrets out of version control. Why: "The source code/configuration files are not included in the package" is an instant deduction item.
 
-## Video Checklist
+3. Read the rubric and write down the exact requirements before coding. Capture these exact lines: "develop full stack applications using React.js ... and FastAPI and SQLMOdel/SQLAlchemy", "Your application implements CRUD operations to manage student survey data in persistence storage.", "Please containerize your applications using Docker technology and deploy them on the Kubernetes cluster using the helm charts.", and the required survey fields. At this step, we lock scope before implementation. Why: "Does system meet the functional requirements along with proper documentation and a voice-over video recording: 85 points."
 
-Use this as the recommended flow for the recorded walkthrough.
+4. Install the tools: Python, Node.js, npm, Git, Docker Desktop, AWS CLI v2, `kubectl`, Helm, `eksctl`, and Postman. Verify with:
 
-1. Introduce the assignment goal and the required stack.
-2. Show the project structure and explain frontend, backend, Docker, and Helm folders.
-3. Show the backend code at a high level:
-   - survey model
-   - database setup
-   - CRUD routes
-4. Show the frontend code at a high level:
-   - survey form
-   - list/edit/delete flow
-   - API integration
-5. Show local run commands for backend and frontend.
-6. Demonstrate local CRUD behavior if you want a pre-cloud checkpoint.
-7. Show Dockerfiles and explain why the apps were containerized.
-8. Show the ECR repositories and explain that images are stored there for Kubernetes deployment.
-9. Show the EKS cluster and explain that Kubernetes is running the app.
-10. Show the RDS instance and explain that survey data is stored in MySQL.
-11. Show the Elastic IP backed ingress load balancer and explain how the app becomes publicly reachable.
-12. Show the deployed frontend in the browser.
-13. Demonstrate:
-   - create survey
-   - list surveys
-   - edit survey
-   - delete survey
-14. Show the public `/api/health` endpoint or a survey API response briefly.
-15. Close with the deployed URL, what was built, and where the documentation is.
+   ```powershell
+   python --version
+   node --version
+   npm --version
+   git --version
+   docker version
+   aws --version
+   kubectl version --client
+   helm version
+   eksctl version
+   ```
 
-## What To Say
+   At this step, we prepare the machine for coding, testing, containers, Kubernetes, and AWS. Why: "You can use Postman ... to test the working of your containerized microservice(s) – the backend REST APIs before integrating them with the React application."
 
-Use these as short narration prompts, not as lines you must read word-for-word.
+5. Create the project folders:
 
-### Phase 1 Talk Track
+   ```powershell
+   New-Item -ItemType Directory backend
+   New-Item -ItemType Directory backend\app
+   New-Item -ItemType Directory frontend
+   New-Item -ItemType Directory helm
+   New-Item -ItemType Directory helm\student-survey
+   New-Item -ItemType Directory helm\student-survey\templates
+   ```
 
-What we are doing:
-We are first reading the rubric and extracting the exact requirements so the implementation matches what the course is grading.
+   At this step, we create the final repository layout. Why: "I expect a zipped package containing the source files, configuration files..."
 
-Why we are doing it:
-This keeps the project focused on the required CRUD features, the required React and FastAPI stack, and the required Kubernetes plus Helm deployment.
+6. Create `backend/requirements.txt` with the packages used in this solution:
 
-### Phase 2 Talk Track
+   ```text
+   fastapi==0.116.1
+   uvicorn[standard]==0.35.0
+   sqlmodel==0.0.24
+   pymysql==1.1.1
+   python-dotenv==1.1.1
+   email-validator==2.3.0
+   cryptography==45.0.7
+   ```
 
-What we are doing:
-We are building the full-stack application locally first, with React on the frontend and FastAPI plus SQLModel on the backend.
+   At this step, we define the backend runtime. Why: "develop full stack applications using React.js ... and FastAPI and SQLMOdel/SQLAlchemy..."
 
-Why we are doing it:
-Local development lets us verify the business logic and user flows before adding deployment complexity. It is much easier to debug code locally than after it is containerized and deployed.
+7. Create these backend files using the current versions in this repo as your exact templates:
 
-### Phase 3 Talk Track
+   ```text
+   backend/app/__init__.py
+   backend/app/database.py
+   backend/app/models.py
+   backend/app/main.py
+   backend/.env.example
+   ```
 
-What we are doing:
-We are containerizing the frontend and backend with Docker.
+   `database.py` must read `DATABASE_URL` and default to SQLite. `models.py` must define the survey table and the helper conversion functions. `main.py` must expose `GET /api/health`, `GET /api/surveys`, `GET /api/surveys/{survey_id}`, `POST /api/surveys`, `PUT /api/surveys/{survey_id}`, and `DELETE /api/surveys/{survey_id}`. At this step, we implement the persistence layer and the CRUD API. Why: "Your application implements CRUD operations to manage student survey data in persistence storage."
 
-Why we are doing it:
-Containers make the runtime environment reproducible, portable, and suitable for Kubernetes deployment. This is the bridge between development and cloud deployment.
+8. Put 1-2 sentence header comments at the top of every backend source file. At this step, we satisfy the comment requirement before moving on. Why: "For every source file, please include comments at the top of the program describing what the program does. This only needs to be 1 or 2 sentences."
 
-### Phase 4 Talk Track
+9. Install and run the backend locally:
 
-What we are doing:
-We are provisioning the database and connecting the backend to a persistent MySQL instance.
-
-Why we are doing it:
-The project requires persistence for survey CRUD operations, and using RDS gives us managed relational storage that works cleanly with the deployed backend.
-
-### Phase 5 Talk Track
-
-What we are doing:
-We are deploying both applications to Kubernetes with Helm and exposing them through a single ingress path.
-
-Why we are doing it:
-Helm gives us reusable deployment configuration, Kubernetes manages the running containers, and the ingress gives us one public entry point for both the frontend and the backend API.
-
-### AWS Talk Track
-
-What we are doing:
-We are using ECR for image storage, EKS for Kubernetes, RDS for MySQL, and an ingress load balancer with Elastic IPs for public access.
-
-Why we are doing it:
-Each AWS service maps to one deployment need: image hosting, orchestration, persistence, and network exposure. The Elastic IPs are used only at the public load balancer layer, where stable public addresses actually matter.
-
-### Verification Talk Track
-
-What we are doing:
-We are verifying the deployment through the browser and through live API requests.
-
-Why we are doing it:
-This proves the system is not only deployed, but functionally working end to end, including storage, routing, and public access.
-
-### Teardown Talk Track
-
-What we are doing:
-We are documenting how to remove the AWS resources after practice.
-
-Why we are doing it:
-Cloud resources continue billing until they are deleted, so teardown is part of a responsible and reproducible deployment workflow.
-
-## Working Agreement For This Practice Run
-
-1. Codex will do as much implementation work as possible inside this project folder.
-2. Any steps that must be done manually in AWS, Kubernetes dashboards, or similar UIs will be called out clearly.
-3. This README will be updated continuously so it becomes the exact runbook for the later recorded version.
-4. If any AWS label, menu item, or setting differs from what is documented here, we will correct the README so the final instructions stay accurate.
-
-## High-Level Architecture
-
-1. `frontend/`: React application for creating, viewing, updating, and deleting student surveys.
-2. `backend/`: FastAPI application exposing survey CRUD endpoints and connecting to a relational database.
-3. `docker/`: Container definitions and related deployment notes if needed.
-4. `helm/`: Helm chart for deploying frontend and backend to Kubernetes.
-
-## Current Implementation Snapshot
-
-1. Frontend completed:
-   - React + TypeScript + Vite scaffold
-   - Survey create form
-   - Survey list view
-   - Edit survey workflow
-   - Delete survey workflow
-   - Backend API integration
-2. Backend completed:
-   - FastAPI application
-   - SQLModel persistence layer
-   - Local SQLite default configuration
-   - REST endpoints for create, list, get, update, and delete
-   - Health endpoint for deployment probes
-3. Deployment scaffolding completed:
-   - Backend Dockerfile
-   - Frontend Dockerfile
-   - Helm chart with frontend, backend, secret, services, and ingress
-
-## Practice Run Steps
-
-### Phase 1: Understand Requirements
-
-1. Read the assignment rubric.
-2. Confirm the required fields for the survey form:
-   - First name
-   - Last name
-   - Street address
-   - City
-   - State
-   - Zip
-   - Telephone number
-   - Email
-   - Date of survey
-   - What they liked most about the campus
-   - How they became interested in the university
-   - Recommendation likelihood
-3. Confirm that CRUD functionality is required:
-   - Create a survey
-   - Read all surveys
-   - Read one survey
-   - Update one survey
-   - Delete one survey
-4. Confirm the deployment expectations:
-   - Dockerized frontend
-   - Dockerized backend
-   - Kubernetes deployment
-   - Helm chart packaging
-
-### Phase 2: Local Development Setup
-
-1. Create the project folder structure.
-2. Build the backend API using FastAPI and SQLModel.
-3. Build the frontend UI using React.
-4. Connect the frontend to the backend APIs.
-5. Test CRUD operations locally.
-6. Record the exact local run commands here once finalized.
-
-Code overview for this phase:
-Backend API, database models, validation, and routes are implemented here. Frontend form pages, list/detail/edit views, and API integration are also implemented here.
-
-Local commands used during this phase:
-
-1. Backend dependency install:
    ```powershell
    cd backend
    python -m pip install -r requirements.txt
+   uvicorn app.main:app --reload
    ```
-2. Frontend dependency install:
+
+   Open `http://127.0.0.1:8000/docs`. At this step, we verify the API starts before adding the frontend. Why: "Does the assignment run without errors: 13 points."
+
+10. Test the backend by itself with Swagger UI or Postman. Use this sequence:
+
+   ```text
+   GET  http://127.0.0.1:8000/api/health
+   POST http://127.0.0.1:8000/api/surveys
+   GET  http://127.0.0.1:8000/api/surveys
+   GET  http://127.0.0.1:8000/api/surveys/1
+   PUT  http://127.0.0.1:8000/api/surveys/1
+   DELETE http://127.0.0.1:8000/api/surveys/1
+   ```
+
+   Use a JSON body with the rubric fields. At this step, we verify the microservice before integrating React. Why: "You can use Postman ... to test the working of your containerized microservice(s) – the backend REST APIs before integrating them with the React application."
+
+11. Scaffold the React frontend:
+
    ```powershell
+   npm create vite@latest frontend -- --template react-ts
    cd frontend
    npm install
    ```
-3. Backend local run:
-   ```powershell
-   cd backend
-   uvicorn app.main:app --reload
+
+   At this step, we create the React application required by the rubric. Why: "develop full stack applications using React.js to implement the frontend of the Student Survey application"
+
+12. Replace the Vite starter files with the real project files from this repository:
+
+   ```text
+   frontend/src/App.tsx
+   frontend/src/api.ts
+   frontend/src/types.ts
+   frontend/src/main.tsx
+   frontend/src/styles.css
+   frontend/index.html
    ```
-4. Frontend local run:
+
+   `App.tsx` renders the survey page and archive. `api.ts` calls the backend. `types.ts` defines the frontend data shape. `styles.css` holds the small tweaks on top of W3.CSS. `index.html` loads the W3.CSS link and page title. At this step, we implement the frontend and preserve the old Assignment 1 visual style while upgrading it to Project 3 behavior. Why: "The application allows prospective students to fill out and submit a survey form ... It also allows users to view all surveys recorded to date. In addition, the application provides the capabilities to update and delete a specific survey."
+
+13. Put 1-2 sentence header comments at the top of `frontend/src/App.tsx`, `frontend/src/api.ts`, and `frontend/src/types.ts`. At this step, we satisfy the rubric comment requirement on the frontend too. Why: "For every source file, please include comments at the top of the program describing what the program does."
+
+14. Run the frontend locally:
+
    ```powershell
    cd frontend
    npm run dev
    ```
-5. Frontend production build verification:
+
+   Open `http://127.0.0.1:5173`. At this step, we verify the browser UI loads. Why: "Does the assignment run without errors: 13 points."
+
+15. Test the local full stack in the browser by creating a survey, checking that it appears in Survey Archive, editing it, verifying the change persists, deleting it, and verifying it disappears. At this step, we verify React and FastAPI work together. Why: "Your application implements CRUD operations to manage student survey data in persistence storage."
+
+16. Create `backend/Dockerfile` and `frontend/Dockerfile` using the current versions in this repository. The backend Dockerfile must install the Python requirements and run Uvicorn on port 8000. The frontend Dockerfile must build the Vite app and serve it from NGINX on port 80. At this step, we containerize both applications. Why: "Please containerize your applications using Docker technology..."
+
+17. Build both images locally and do not proceed until both succeed:
+
+   ```powershell
+   cd backend
+   docker build -t student-survey-backend:backendfix1 .
+   ```
+
    ```powershell
    cd frontend
-   npm run build
+   docker build -t student-survey-frontend:literalv6 .
    ```
-6. Backend CRUD smoke test summary:
-   - Health endpoint returned `200`
-   - Create returned `201`
-   - List returned created survey
-   - Update returned `200`
-   - Delete returned `204`
 
-Files created in this phase:
+   At this step, we catch container issues before AWS deployment. Why: "Be sure to test access and functionality to your submission before the due date."
 
-1. `backend/app/main.py`
-2. `backend/app/models.py`
-3. `backend/app/database.py`
-4. `backend/requirements.txt`
-5. `backend/.env.example`
-6. `frontend/src/App.tsx`
-7. `frontend/src/api.ts`
-8. `frontend/src/types.ts`
-9. `frontend/src/main.tsx`
-10. `frontend/src/styles.css`
+18. Create these Helm files using the current repository versions:
 
-### Phase 3: Containerization
-
-1. Create a Dockerfile for the backend.
-2. Create a Dockerfile for the frontend.
-3. Define runtime environment variables.
-4. Build containers locally.
-5. Test the containers locally.
-
-Code overview for this phase:
-Application startup commands, environment configuration, and image build instructions are created here.
-
-Files created in this phase:
-
-1. `backend/Dockerfile`
-2. `frontend/Dockerfile`
-
-Current verification note:
-
-1. Dockerfiles are written.
-2. Docker image builds were attempted.
-3. Docker daemon was not running on this machine at the time of verification, so image build validation is still pending.
-
-### Phase 4: Database Provisioning
-
-1. Decide which database to use for the practice run.
-2. If using Amazon RDS MySQL, create it in development or sandbox mode only.
-3. Capture all required configuration values:
-   - DB host
-   - DB port
-   - DB name
-   - DB username
-   - DB password
-4. Update backend configuration to use the database.
-5. Test that the backend can connect successfully.
-
-Manual step placeholder:
-This phase will include AWS console actions if we use RDS. Those will be written out precisely after we confirm the actual screens and labels.
-
-Planned practice-run choice:
-
-1. Local development database: SQLite
-2. AWS deployment database: Amazon RDS MySQL
-
-### Phase 5: Kubernetes Deployment
-
-1. Prepare Kubernetes manifests or Helm values for frontend and backend.
-2. Create the Helm chart structure.
-3. Template the frontend deployment and service.
-4. Template the backend deployment and service.
-5. Add configuration and secret handling.
-6. Deploy to the Kubernetes cluster with Helm.
-7. Verify Pods, Services, and application accessibility.
-
-Code overview for this phase:
-Helm templates, chart metadata, values files, service exposure, and deployment configuration are created here.
-
-Manual step placeholder:
-Any cloud Kubernetes setup steps, ingress configuration, or cluster console work will be documented as exact numbered actions.
-
-Files created in this phase:
-
-1. `helm/student-survey/Chart.yaml`
-2. `helm/student-survey/values.yaml`
-3. `helm/student-survey/templates/backend-secret.yaml`
-4. `helm/student-survey/templates/backend-deployment.yaml`
-5. `helm/student-survey/templates/backend-service.yaml`
-6. `helm/student-survey/templates/frontend-deployment.yaml`
-7. `helm/student-survey/templates/frontend-service.yaml`
-8. `helm/student-survey/templates/ingress.yaml`
-
-Deployment design currently assumed:
-
-1. Amazon EKS hosts the Kubernetes cluster.
-2. Frontend and backend run as separate Deployments.
-3. Frontend and backend are exposed behind one Ingress.
-4. Frontend uses `/api` on the same host to reach the backend.
-5. Backend database connection is stored in a Kubernetes Secret created by Helm.
-6. Public ingress uses an AWS Network Load Balancer with Elastic IPs attached.
-
-### Phase 5A: AWS Preparation Steps For The Practice Run
-
-These are the first manual steps expected for the AWS-hosted path. We will refine wording as actual screens are confirmed.
-
-1. Install AWS CLI on the local machine.
-2. Install Helm on the local machine.
-3. Sign in to the AWS Console.
-4. Choose one AWS region for the whole project and use it consistently.
-5. Create or confirm IAM permissions for:
-   - EKS
-   - ECR
-   - RDS
-   - VPC/security groups
-6. Decide whether the EKS cluster will be created:
-   - Through the AWS Console
-   - Through `eksctl`
-   - Through Terraform or CloudFormation
-7. Create two container repositories in Amazon ECR:
-   - One for frontend image
-   - One for backend image
-8. Create an Amazon RDS MySQL instance in development or sandbox mode.
-9. Create an Amazon EKS cluster.
-10. Install an ingress controller in the EKS cluster.
-11. Push the frontend and backend images to ECR.
-12. Update Helm values with ECR image URLs, database connection details, and ingress host.
-13. Deploy the Helm chart to EKS.
-14. Verify Pods, Services, Ingress, and application access.
-
-Current tooling notes for this phase:
-
-1. `Helm` installation was attempted with `winget` and completed successfully.
-2. The current shell session did not automatically pick up the new `PATH`, so a new terminal may be needed before `helm` works as a normal command.
-3. `AWS CLI` MSI installation was unreliable in this shell environment, so a Python user-level install was used as a fallback.
-4. On this machine, confirmed tool paths are:
-   - `eksctl`: `C:\Users\15713\bin\eksctl.exe`
-   - `helm`: `C:\Users\15713\AppData\Local\Microsoft\WinGet\Packages\Helm.Helm_Microsoft.Winget.Source_8wekyb3d8bbwe\windows-amd64\helm.exe`
-   - `aws`: `C:\Users\15713\AppData\Roaming\Python\Python314\Scripts\aws.cmd`
-5. For the recorded run, the goal should still be to use normal `PATH`-based commands after opening a fresh terminal and confirming installs.
-
-### Phase 5B: Command-First AWS Setup Flow
-
-Use these commands as the starting point for the AWS-hosted run. Replace placeholder values before running them.
-
-1. Install AWS CLI v2 on Windows.
-   ```powershell
-   msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi
+   ```text
+   helm/student-survey/Chart.yaml
+   helm/student-survey/values.yaml
+   helm/student-survey/templates/_helpers.tpl
+   helm/student-survey/templates/backend-secret.yaml
+   helm/student-survey/templates/backend-deployment.yaml
+   helm/student-survey/templates/backend-service.yaml
+   helm/student-survey/templates/frontend-deployment.yaml
+   helm/student-survey/templates/frontend-service.yaml
+   helm/student-survey/templates/ingress.yaml
    ```
-2. Open a new terminal and verify the install.
-   ```powershell
-   aws --version
+
+   `values.yaml` should point to the two ECR repositories and hold the non-secret defaults. At this step, we package the Kubernetes resources with Helm. Why: "deploy them on the Kubernetes cluster using the helm charts. There should be a frontend Pod for the React application and a backend Pod for the REST API/persistence layer."
+
+19. Create a local-only Helm override file named `helm/student-survey/values.aws.local.yaml` with the real MySQL URL later, and keep it out of Git:
+
+   ```yaml
+   database:
+     url: mysql+pymysql://adminuser:REPLACE_DB_PASSWORD@REPLACE_DB_HOST:3306/student_surveys
    ```
-3. If `aws` is not on `PATH` yet on this machine, the currently working fallback path is:
-   ```powershell
-   & "$env:APPDATA\Python\Python314\Scripts\aws.cmd" --version
+
+   At this step, we keep the real database secret out of the repository. Why: the README must be detailed and reproducible, but it must not expose secrets.
+
+20. Create the AWS IAM user and access key that will be used for the project. UI clicks:
+
+   ```text
+   AWS Console
+   Search IAM
+   IAM > Users > Create user
+   choose a username
+   Next
+   Attach policies directly
+   select AdministratorAccess
+   Create user
+   open the new user
+   Security credentials
+   Create access key
+   Use case: Command Line Interface (CLI)
+   copy the Access key ID and Secret access key
    ```
-4. Configure AWS CLI credentials.
+
+   At this step, we create the AWS identity needed for CLI automation. Why: the deployment path requires ECR, EKS, RDS, VPC, and security group access.
+
+21. Configure the AWS CLI and verify the identity:
+
    ```powershell
    aws configure
-   ```
-5. Confirm the identity being used.
-   ```powershell
    aws sts get-caller-identity
    ```
-6. Install `eksctl` for Windows by downloading the latest official release ZIP and extracting `eksctl.exe` into a folder already in `PATH`, or a folder you add to `PATH`.
-7. Verify `eksctl`.
-   ```powershell
-   eksctl version
+
+   Use `us-east-1` as the default region. The practice account used here is `390449413488`. At this step, we bind the local machine to the right account. Why: "I can’t figure out how to use the assignment, and instructions are left out" is an instant deduction item.
+
+22. Create the two ECR repositories. UI clicks:
+
+   ```text
+   Search Elastic Container Registry
+   Amazon ECR > Repositories
+   Create repository
+   Repository name: student-survey-frontend
+   Create repository
+   Create repository again
+   Repository name: student-survey-backend
+   Create repository
    ```
-8. Verify `kubectl`.
-   ```powershell
-   kubectl version --client
-   ```
-9. Verify `helm`.
-   ```powershell
-   helm version
-   ```
-10. Create ECR repositories.
+
+   Commands:
+
    ```powershell
    aws ecr create-repository --region us-east-1 --repository-name student-survey-frontend
    aws ecr create-repository --region us-east-1 --repository-name student-survey-backend
    ```
-   Confirmed results for this practice account:
-   - `390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend`
-   - `390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend`
-11. Authenticate Docker to Amazon ECR. Replace `<account-id>` with your AWS account ID.
+
+   The repository URIs for this practice account are `390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend` and `390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend`. At this step, we create the registry endpoints for the images. Why: the Kubernetes cluster must pull images from a registry.
+
+23. Log Docker in to ECR and push both images:
+
    ```powershell
-   aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
+   aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 390449413488.dkr.ecr.us-east-1.amazonaws.com
+   docker tag student-survey-backend:backendfix1 390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend:backendfix1
+   docker push 390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend:backendfix1
+   docker tag student-survey-frontend:literalv6 390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend:literalv6
+   docker push 390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend:literalv6
    ```
-12. Build and tag the backend image. Replace `<account-id>`.
-   ```powershell
-   cd backend
-   docker build -t student-survey-backend:latest .
-   docker tag student-survey-backend:latest <account-id>.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend:latest
-   ```
-13. Push the backend image.
-   ```powershell
-   docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend:latest
-   ```
-14. Build and tag the frontend image. Replace `<account-id>`.
-   ```powershell
-   cd frontend
-   docker build -t student-survey-frontend:latest .
-   docker tag student-survey-frontend:latest <account-id>.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend:latest
-   ```
-15. Push the frontend image.
-   ```powershell
-   docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend:latest
-   ```
-16. Create the EKS cluster with `eksctl`. This uses `us-east-1`, creates two managed nodes, and names the cluster `swe645-project3-cluster`.
-   ```powershell
-   eksctl create cluster --name swe645-project3-cluster --region us-east-1 --nodes 2 --node-type t3.medium --managed
-   ```
-   Practice run adjustment used in reality to reduce cost:
+
+   At this step, we publish the exact images used by the live deployment. Why: "Please containerize your applications..." and EKS cannot deploy images that were never pushed.
+
+24. Create the EKS cluster. Use the command path that was actually used for this practice run:
+
    ```powershell
    eksctl create cluster --name swe645-project3-cluster --region us-east-1 --nodes 1 --nodes-min 1 --nodes-max 2 --node-type t3.small --managed
    ```
-17. Update local kubeconfig after cluster creation.
+
+   UI verification path:
+
+   ```text
+   Search Elastic Kubernetes Service
+   Amazon EKS > Clusters
+   click swe645-project3-cluster
+   confirm Status = Active
+   ```
+
+   At this step, we provision the Kubernetes environment. Why: "deploy them on the Kubernetes cluster using the helm charts."
+
+25. Update local kubeconfig and verify the cluster:
+
    ```powershell
    aws eks update-kubeconfig --region us-east-1 --name swe645-project3-cluster
-   ```
-18. Verify cluster connectivity.
-   ```powershell
+   kubectl config current-context
    kubectl get nodes
-   kubectl get svc
    ```
-19. Create the RDS MySQL instance. Replace placeholders before running.
+
+   At this step, we connect `kubectl` and Helm to the cluster. Why: "Does the assignment run without errors: 13 points."
+
+26. Allocate two Elastic IP addresses. UI clicks:
+
+   ```text
+   Search EC2
+   EC2 > Elastic IPs
+   Allocate Elastic IP address
+   Allocate
+   Repeat once
+   copy both Allocation IDs
+   ```
+
+   The allocation IDs used in this practice run are `eipalloc-08319e05489b4cd69` and `eipalloc-01f506c542404a359`. At this step, we reserve stable public IPs for the ingress load balancer. Why: this is the correct place to use Elastic IPs in this design.
+
+27. Install the NGINX ingress controller with those Elastic IP allocations:
+
    ```powershell
-   aws rds create-db-instance `
-     --region us-east-1 `
-     --db-instance-identifier swe645-project3-mysql `
-     --db-instance-class db.t3.micro `
-     --engine mysql `
-     --engine-version 8.0 `
-     --allocated-storage 20 `
-     --master-username <db-username> `
-     --master-user-password <db-password> `
-     --db-name student_surveys `
-     --publicly-accessible `
-     --backup-retention-period 0
+   helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+   helm repo update
+   kubectl create namespace ingress-nginx
+   @"
+   controller:
+     service:
+       type: LoadBalancer
+       annotations:
+         service.beta.kubernetes.io/aws-load-balancer-type: nlb
+         service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+         service.beta.kubernetes.io/aws-load-balancer-eip-allocations: eipalloc-08319e05489b4cd69,eipalloc-01f506c542404a359
+   "@ | Set-Content ingress-nginx-values.yaml
+   helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx -f ingress-nginx-values.yaml
+   kubectl get svc ingress-nginx-controller -n ingress-nginx
    ```
-20. Wait for RDS to become available, then capture the endpoint.
+
+   At this step, we create the public entry point that will serve both `/` and `/api`. Why: the deployed app needs one public front door.
+
+28. Create the RDS DB subnet group using private subnets in the EKS VPC. UI clicks:
+
+   ```text
+   Search RDS
+   Amazon RDS > Subnet groups
+   Create DB subnet group
+   Name: swe645-project3-db-subnets
+   Description: Private subnets for SWE645 Project 3 RDS
+   VPC: vpc-051a135d841ab586c
+   add subnet-0fd42a1bd9b50abf1
+   add subnet-090d87dc640bf111b
+   Create
+   ```
+
+   At this step, we create the private network placement for the database. Why: the database in this solution is private-only.
+
+29. Create the RDS security group and allow MySQL from the EKS cluster security groups. UI clicks:
+
+   ```text
+   Search EC2
+   EC2 > Security Groups
+   Create security group
+   Name: swe645-project3-rds-sg
+   Description: MySQL access for SWE645 Project 3 RDS
+   VPC: vpc-051a135d841ab586c
+   Create security group
+   open the new security group
+   Edit inbound rules
+   Add MySQL/Aurora rule from sg-04a9046b2ad3fcf4c
+   Add MySQL/Aurora rule from sg-0e84b0d133adc5a91
+   Save rules
+   ```
+
+   The security group ID used here is `sg-0024f4cd9a38e3ca1`. At this step, we let the backend pod reach MySQL on port 3306. Why: the backend cannot persist survey data without database network access.
+
+30. Create the MySQL RDS instance in Dev/Test mode. UI clicks:
+
+   ```text
+   Search RDS
+   Amazon RDS > Databases
+   Create database
+   Standard create
+   Engine type: MySQL
+   Template: Dev/Test
+   DB instance identifier: swe645-project3-mysql
+   Master username: adminuser
+   choose and save a password
+   DB instance class: db.t3.micro
+   Allocated storage: 20 GiB
+   VPC: vpc-051a135d841ab586c
+   DB subnet group: swe645-project3-db-subnets
+   Public access: No
+   Existing VPC security group: swe645-project3-rds-sg
+   Initial database name: student_surveys
+   Create database
+   ```
+
+   Wait for `Available`, then record the endpoint. The endpoint used in this practice run is `swe645-project3-mysql.ckx8ccwwessg.us-east-1.rds.amazonaws.com`. At this step, we create the persistent database. Why: "You can use Amazon Relational Database Service (Amazon RDS) to provision and use a MySQL database for this homework ... When using Amazon RDS, please make sure that you set up the database in Development/Sandbox mode to avoid any unexpected charges."
+
+31. Put the real database URL into `helm/student-survey/values.aws.local.yaml`:
+
+   ```yaml
+   database:
+     url: mysql+pymysql://adminuser:YOUR_REAL_PASSWORD@swe645-project3-mysql.ckx8ccwwessg.us-east-1.rds.amazonaws.com:3306/student_surveys
+   ```
+
+   Then verify the chart:
+
    ```powershell
-   aws rds describe-db-instances --region us-east-1 --db-instance-identifier swe645-project3-mysql
+   helm lint .\helm\student-survey
+   helm template student-survey-release .\helm\student-survey -f .\helm\student-survey\values.aws.local.yaml
    ```
-   Confirmed endpoint for this practice run:
-   - `swe645-project3-mysql.ckx8ccwwessg.us-east-1.rds.amazonaws.com`
-21. Update [values.yaml](F:/dev/projects/homework/SWE-645/swe-645-project-3-test/helm/student-survey/values.yaml) with:
-   - ECR frontend image URL
-   - ECR backend image URL
-   - RDS connection string
-   - final ingress host
-22. Deploy the Helm chart.
+
+   At this step, we connect Helm to the real database and catch template mistakes before deployment. Why: "I spend more than 5 minutes trying to debug the assignment" is an instant deduction risk.
+
+32. Deploy the application with Helm:
+
    ```powershell
-   helm install student-survey-release .\\helm\\student-survey
+   helm install student-survey-release .\helm\student-survey -f .\helm\student-survey\values.aws.local.yaml --set backend.image.tag=backendfix1 --set frontend.image.tag=literalv6
    ```
-23. Verify deployment resources.
+
+   If updating an existing deployment, run:
+
+   ```powershell
+   helm upgrade student-survey-release .\helm\student-survey -f .\helm\student-survey\values.aws.local.yaml --set backend.image.tag=backendfix1 --set frontend.image.tag=literalv6
+   ```
+
+   At this step, we create the frontend pod, backend pod, services, secret, and ingress resource. Why: "There should be a frontend Pod for the React application and a backend Pod for the REST API/persistence layer."
+
+33. Verify the deployment:
+
    ```powershell
    kubectl get pods
    kubectl get svc
    kubectl get ingress
+   kubectl rollout status deployment/student-survey-release-student-survey-frontend --timeout=180s
+   kubectl rollout status deployment/student-survey-release-student-survey-backend --timeout=180s
+   kubectl get svc ingress-nginx-controller -n ingress-nginx
    ```
-24. If values change later, upgrade the release instead of reinstalling it.
+
+   The live URL for this practice run is `http://a041d7851168b4494af23d6af1ca746a-e4ea7fc14e27eccb.elb.us-east-1.amazonaws.com/`. The health endpoint is `http://a041d7851168b4494af23d6af1ca746a-e4ea7fc14e27eccb.elb.us-east-1.amazonaws.com/api/health`. At this step, we verify the infrastructure and capture the required public URL. Why: "Also, provide the URL of your application deployed on Kubernetes in readme file..."
+
+34. Test the deployed backend directly with Postman or PowerShell. First test:
+
    ```powershell
-   helm upgrade student-survey-release .\\helm\\student-survey
+   Invoke-WebRequest -Uri "http://a041d7851168b4494af23d6af1ca746a-e4ea7fc14e27eccb.elb.us-east-1.amazonaws.com/api/health" -UseBasicParsing
    ```
 
-### Phase 5C: Actual AWS Resources Created During This Practice Run
+   Then test create, list, update, and delete against the public `/api/surveys` routes using the same payload shape you used locally. At this step, we verify the live API works independently of the browser. Why: "Be sure to test access and functionality to your submission before the due date."
 
-1. AWS account:
-   - `390449413488`
-2. EKS cluster:
-   - Name: `swe645-project3-cluster`
-   - Region: `us-east-1`
-   - Kubernetes version: `1.34`
-3. ECR repositories:
-   - `390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend`
-   - `390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend`
-4. RDS MySQL instance:
-   - Identifier: `swe645-project3-mysql`
-   - Endpoint: `swe645-project3-mysql.ckx8ccwwessg.us-east-1.rds.amazonaws.com`
-   - Port: `3306`
-   - Visibility: private only
-5. Elastic IPs used for the public ingress load balancer:
-   - `44.207.19.25` with allocation ID `eipalloc-08319e05489b4cd69`
-   - `54.86.200.105` with allocation ID `eipalloc-01f506c542404a359`
-6. Public ingress load balancer:
-   - `a041d7851168b4494af23d6af1ca746a-e4ea7fc14e27eccb.elb.us-east-1.amazonaws.com`
-7. Public application URL for this practice run:
-   - `http://a041d7851168b4494af23d6af1ca746a-e4ea7fc14e27eccb.elb.us-east-1.amazonaws.com/`
-8. Public backend health endpoint:
-   - `http://a041d7851168b4494af23d6af1ca746a-e4ea7fc14e27eccb.elb.us-east-1.amazonaws.com/api/health`
-9. Live deployment verification completed:
-   - Frontend root returned HTTP `200`
-   - Backend health returned HTTP `200`
-   - Survey create succeeded through the public API
-   - Survey list returned the created record through the public API
+35. Test the deployed application in the browser. Open the live URL, hard refresh it, verify the hero image and `Assignment 3` text appear, create one survey, verify it appears in Survey Archive, edit it, verify the change persists, delete it, and verify the record disappears. At this step, we verify the full end-to-end deployed experience. Why: "Please provide a video recording with voice over demonstrating the working of every part of your application..."
 
-### Phase 5D: Notes From The Live Practice Run
+36. Check the final package contents before zipping. Confirm the repository contains `backend/`, `frontend/`, `helm/`, `README.md`, both Dockerfiles, and all Helm YAML/templates. Confirm it does not include `node_modules`, `dist`, `.env`, database passwords, or `values.aws.local.yaml`. At this step, we protect ourselves from packaging mistakes. Why: "The source code/configuration files are not included in the package" and "The detailed documentation and voice-over recorded video are not included in the package" are instant deduction items.
 
-1. The original EKS kubeconfig generated by `eksctl` referenced `aws-iam-authenticator`, so `aws eks update-kubeconfig` was run afterward to switch the active context to AWS CLI token auth.
-2. The RDS instance was created in private subnets, not as a public database.
-3. The database security group initially allowed MySQL only from one EKS-related security group and had to be updated to also allow the EKS cluster security group actually used by the node.
-4. The ingress controller was installed separately with Helm before the app chart deployment.
-5. Elastic IPs were used only for the public NGINX ingress Network Load Balancer, which is the correct place to use them here.
-6. The backend container required the Python `cryptography` package for MySQL 8 authentication.
-7. Because the chart used `IfNotPresent`, the fixed backend image had to be pushed with a new tag `backendfix1` and deployed with `helm upgrade`.
+37. Record the demo video in the same order as the verification steps: explain the rubric, show the backend files, show the frontend files, show the Dockerfiles, show the Helm chart, show ECR, show EKS, show RDS, show the live site, demonstrate create/read/update/delete, show `/api/health`, and show the live URL in this README. At this step, we satisfy the required demo artifact. Why: "Please provide a video recording with voice over demonstrating the working of every part of your application and make it a part of your submission."
 
-### Phase 6: Submission Packaging
+38. Zip the project for submission after the code, README, and video are ready. Include the source files and configuration files only. At this step, we build the final submission artifact. Why: "The submission for this assignment should be through the Canvas website. I expect a zipped package containing the source files, configuration files, such as Dockerfile, YAML manifests, HelmChart..."
 
-1. Verify the application runs without errors.
-2. Verify all source code and config files are included.
-3. Verify README instructions are complete.
-4. Add the deployed application URL to the README.
-5. Prepare the demo video checklist.
-6. Zip the final submission contents.
+39. If you want to stop AWS charges after practice, tear down the cloud resources in this order:
 
-### Phase 7: Teardown
-
-Use this section when you are done practicing and want to stop AWS charges.
-
-1. Delete the application Helm release.
    ```powershell
    helm uninstall student-survey-release
-   ```
-2. Delete the ingress controller Helm release.
-   ```powershell
    helm uninstall ingress-nginx --namespace ingress-nginx
-   ```
-3. Confirm Kubernetes load balancers and pods are gone.
-   ```powershell
-   kubectl get all -A
-   ```
-4. Delete the RDS instance. Replace `--skip-final-snapshot` only if you intentionally want a final snapshot.
-   ```powershell
    aws rds delete-db-instance --region us-east-1 --db-instance-identifier swe645-project3-mysql --skip-final-snapshot --delete-automated-backups
-   ```
-5. Wait until the RDS instance is gone.
-   ```powershell
    aws rds wait db-instance-deleted --region us-east-1 --db-instance-identifier swe645-project3-mysql
-   ```
-6. Delete the RDS DB subnet group.
-   ```powershell
    aws rds delete-db-subnet-group --region us-east-1 --db-subnet-group-name swe645-project3-db-subnets
-   ```
-7. Delete the RDS security group.
-   ```powershell
    aws ec2 delete-security-group --region us-east-1 --group-id sg-0024f4cd9a38e3ca1
-   ```
-8. Delete the EKS cluster.
-   ```powershell
    eksctl delete cluster --name swe645-project3-cluster --region us-east-1
-   ```
-9. Release the Elastic IPs after the ingress load balancer is fully gone.
-   ```powershell
    aws ec2 release-address --region us-east-1 --allocation-id eipalloc-08319e05489b4cd69
    aws ec2 release-address --region us-east-1 --allocation-id eipalloc-01f506c542404a359
-   ```
-10. If you want to clean up the container registry too, delete the ECR repositories.
-   ```powershell
    aws ecr delete-repository --region us-east-1 --repository-name student-survey-frontend --force
    aws ecr delete-repository --region us-east-1 --repository-name student-survey-backend --force
    ```
-11. Verify that no practice resources remain in the account before ending the session.
 
-## Manual Steps Log
-
-This section will be updated with exact user-performed steps as we go.
-
-1. AWS-hosted deployment path selected.
-2. AWS region selected: `us-east-1`.
-3. `Helm` installation attempted through `winget`; install appears successful but requires a fresh shell or path refresh.
-4. `AWS CLI` fallback install completed via Python user scripts.
-5. `eksctl` installed in a user-local bin folder.
-6. AWS CLI credentials configured successfully for IAM user `Ryanline`.
-7. `sts get-caller-identity` verified account `390449413488`.
-8. Amazon ECR repositories created successfully:
-   - `390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-frontend`
-   - `390449413488.dkr.ecr.us-east-1.amazonaws.com/student-survey-backend`
-9. EKS cluster created successfully in `us-east-1`.
-10. RDS MySQL instance created successfully in private subnets.
-11. Two Elastic IPs allocated and attached to the ingress Network Load Balancer.
-12. Frontend and backend images built and pushed to Amazon ECR.
-13. Public app URL verified through the AWS load balancer.
-14. AWS deployment workflow is being documented primarily with commands rather than console clicks.
-
-## Decisions Log
-
-This section tracks implementation choices so the later recording is easier to reproduce.
-
-1. Initial plan: use the required course stack of React + FastAPI + SQLModel/SQLAlchemy.
-2. Deployment target: Kubernetes with Helm, per the rubric.
-3. Database target: local SQLite for development, Amazon RDS MySQL for AWS deployment.
-4. Kubernetes target: Amazon EKS.
-5. Frontend production networking approach: same host as backend, with API routed through `/api`.
-6. AWS region for the practice run: `us-east-1`.
-7. For cost control, the live EKS practice run used `1 x t3.small` managed node rather than the earlier draft of two `t3.medium` nodes.
-8. RDS is private-only; no Elastic IP is used for the database.
-9. Elastic IPs are used only for the public ingress Network Load Balancer.
-
-## Open Questions To Resolve During The Build
-
-1. Whether to keep the current AWS resources running between practice sessions or tear them down after capturing the final video.
-2. Whether to pin cleaner immutable image tags for the final recorded run instead of `latest` plus one fix tag.
-3. Whether to add TLS/HTTPS to the public ingress for the final recorded run.
-
-## Status
-
-1. Rubric reviewed.
-2. Initial practice runbook created.
-3. Frontend CRUD UI implemented.
-4. Backend CRUD API implemented.
-5. Frontend production build verified.
-6. Backend CRUD smoke test verified.
-7. Dockerfiles created but Docker daemon was not running during build verification.
-8. Helm chart scaffold created.
-9. Practice run region fixed to `us-east-1`.
-10. CLI tooling prepared locally: `helm`, `eksctl`, and a working fallback `aws` command path.
-11. AWS authentication verified with `sts get-caller-identity`.
-12. ECR repositories created in `us-east-1`.
-13. EKS cluster created and reachable with `kubectl`.
-14. RDS MySQL created and reachable from the cluster.
-15. Ingress NLB created with attached Elastic IPs.
-16. Frontend is live through the AWS load balancer.
-17. Backend API health endpoint is live through the AWS load balancer.
-18. Public survey create/list flow verified through the deployed API.
+   At this step, we stop billing and return the AWS account to a clean state. Why: the rubric explicitly warns that RDS should be created in development or sandbox mode to avoid unexpected charges.
