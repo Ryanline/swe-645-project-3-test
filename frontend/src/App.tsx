@@ -131,23 +131,34 @@ function App() {
 
   return (
     <main className="page-shell">
-      <section className="hero-card">
-        <p className="eyebrow">SWE 645 Project 3</p>
-        <h1>Student Survey Portal</h1>
-        <p className="hero-copy">
-          Capture campus visit feedback, review submitted surveys, and practice the full CRUD
-          workflow required for the assignment.
-        </p>
-      </section>
+      <header className="site-header">
+        <div className="site-header-inner">
+          <div>
+            <p className="site-kicker">SWE 645 Assignment 3</p>
+            <h1>Student Survey</h1>
+            <p className="site-copy">
+              Please complete the survey below. Fields marked with <strong>*</strong> are
+              required.
+            </p>
+          </div>
+          <a className="home-link" href="#survey-form">
+            Survey Form
+          </a>
+        </div>
+      </header>
 
       {notice ? <div className={`notice notice-${notice.tone}`}>{notice.text}</div> : null}
 
       <section className="layout-grid">
-        <article className="panel">
+        <article className="panel survey-panel" id="survey-form">
           <div className="panel-heading">
             <div>
-              <p className="eyebrow">Survey Form</p>
-              <h2>{editingId === null ? "Create Survey" : `Edit Survey #${editingId}`}</h2>
+              <p className="section-label">Student Survey Form</p>
+              <h2>{editingId === null ? "Campus Visit Feedback" : `Edit Survey #${editingId}`}</h2>
+              <p className="section-copy">
+                This form keeps the original survey feel while adding the CRUD workflow required
+                for Project 3.
+              </p>
             </div>
             {editingId !== null ? (
               <button className="secondary-button" type="button" onClick={resetForm}>
@@ -157,9 +168,14 @@ function App() {
           </div>
 
           <form className="survey-form" onSubmit={handleSubmit}>
+            <section className="form-section">
+              <div className="section-divider">
+                <span>Required Student Information</span>
+              </div>
+
             <div className="field-grid">
               <label>
-                First Name
+                First Name *
                 <input
                   required
                   value={formData.first_name}
@@ -167,7 +183,7 @@ function App() {
                 />
               </label>
               <label>
-                Last Name
+                Last Name *
                 <input
                   required
                   value={formData.last_name}
@@ -175,7 +191,7 @@ function App() {
                 />
               </label>
               <label className="span-2">
-                Street Address
+                Street Address *
                 <input
                   required
                   value={formData.street_address}
@@ -183,15 +199,15 @@ function App() {
                 />
               </label>
               <label>
-                City
+                City *
                 <input required value={formData.city} onChange={(event) => updateField("city", event.target.value)} />
               </label>
               <label>
-                State
+                State *
                 <input required value={formData.state} onChange={(event) => updateField("state", event.target.value)} />
               </label>
               <label>
-                ZIP Code
+                ZIP *
                 <input
                   required
                   value={formData.zip_code}
@@ -199,7 +215,7 @@ function App() {
                 />
               </label>
               <label>
-                Telephone
+                Telephone *
                 <input
                   required
                   value={formData.telephone}
@@ -207,7 +223,7 @@ function App() {
                 />
               </label>
               <label>
-                Email
+                E-mail *
                 <input
                   required
                   type="email"
@@ -216,7 +232,7 @@ function App() {
                 />
               </label>
               <label>
-                Survey Date
+                Date of Survey *
                 <input
                   required
                   type="date"
@@ -225,10 +241,16 @@ function App() {
                 />
               </label>
             </div>
+            </section>
 
-            <fieldset>
+            <section className="form-section">
+              <div className="section-divider">
+                <span>Campus Experience</span>
+              </div>
+
+            <fieldset className="legacy-fieldset">
               <legend>What did you like most about the campus?</legend>
-              <div className="option-row">
+              <div className="option-grid">
                 {likedMostOptions.map((option) => (
                   <label className="check-option" key={option}>
                     <input
@@ -242,7 +264,7 @@ function App() {
               </div>
             </fieldset>
 
-            <fieldset>
+            <fieldset className="legacy-fieldset">
               <legend>How did you become interested in the university?</legend>
               <div className="option-row">
                 {interestSourceOptions.map((option) => (
@@ -257,9 +279,15 @@ function App() {
                 ))}
               </div>
             </fieldset>
+            </section>
 
-            <label>
-              Recommendation Likelihood
+            <section className="form-section">
+              <div className="section-divider">
+                <span>Recommendation</span>
+              </div>
+
+            <label className="select-label">
+              Likelihood of recommending this school
               <select
                 required
                 value={formData.recommendation_likelihood}
@@ -272,6 +300,7 @@ function App() {
                 ))}
               </select>
             </label>
+            </section>
 
             <div className="actions">
               <button className="primary-button" disabled={isSubmitting} type="submit">
@@ -284,11 +313,15 @@ function App() {
           </form>
         </article>
 
-        <article className="panel">
+        <article className="panel archive-panel">
           <div className="panel-heading">
             <div>
-              <p className="eyebrow">Recorded Responses</p>
-              <h2>Survey List</h2>
+              <p className="section-label">Recorded Responses</p>
+              <h2>Survey Archive</h2>
+              <p className="section-copy">
+                Project 3 extends the original static survey into a full CRUD application by
+                letting us review, edit, and delete submissions.
+              </p>
             </div>
             <button className="secondary-button" type="button" onClick={() => void loadSurveys()}>
               Refresh
@@ -319,6 +352,10 @@ function App() {
                 </div>
 
                 <dl>
+                  <div>
+                    <dt>Address</dt>
+                    <dd>{survey.street_address}</dd>
+                  </div>
                   <div>
                     <dt>Email</dt>
                     <dd>{survey.email}</dd>
