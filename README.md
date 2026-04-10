@@ -15,6 +15,104 @@ Based on `Project-3-Instructions-Rubric.pdf`, the project requires:
 5. Deployment to Kubernetes using Helm charts.
 6. Documentation and a voice-over demo video.
 
+## Video Checklist
+
+Use this as the recommended flow for the recorded walkthrough.
+
+1. Introduce the assignment goal and the required stack.
+2. Show the project structure and explain frontend, backend, Docker, and Helm folders.
+3. Show the backend code at a high level:
+   - survey model
+   - database setup
+   - CRUD routes
+4. Show the frontend code at a high level:
+   - survey form
+   - list/edit/delete flow
+   - API integration
+5. Show local run commands for backend and frontend.
+6. Demonstrate local CRUD behavior if you want a pre-cloud checkpoint.
+7. Show Dockerfiles and explain why the apps were containerized.
+8. Show the ECR repositories and explain that images are stored there for Kubernetes deployment.
+9. Show the EKS cluster and explain that Kubernetes is running the app.
+10. Show the RDS instance and explain that survey data is stored in MySQL.
+11. Show the Elastic IP backed ingress load balancer and explain how the app becomes publicly reachable.
+12. Show the deployed frontend in the browser.
+13. Demonstrate:
+   - create survey
+   - list surveys
+   - edit survey
+   - delete survey
+14. Show the public `/api/health` endpoint or a survey API response briefly.
+15. Close with the deployed URL, what was built, and where the documentation is.
+
+## What To Say
+
+Use these as short narration prompts, not as lines you must read word-for-word.
+
+### Phase 1 Talk Track
+
+What we are doing:
+We are first reading the rubric and extracting the exact requirements so the implementation matches what the course is grading.
+
+Why we are doing it:
+This keeps the project focused on the required CRUD features, the required React and FastAPI stack, and the required Kubernetes plus Helm deployment.
+
+### Phase 2 Talk Track
+
+What we are doing:
+We are building the full-stack application locally first, with React on the frontend and FastAPI plus SQLModel on the backend.
+
+Why we are doing it:
+Local development lets us verify the business logic and user flows before adding deployment complexity. It is much easier to debug code locally than after it is containerized and deployed.
+
+### Phase 3 Talk Track
+
+What we are doing:
+We are containerizing the frontend and backend with Docker.
+
+Why we are doing it:
+Containers make the runtime environment reproducible, portable, and suitable for Kubernetes deployment. This is the bridge between development and cloud deployment.
+
+### Phase 4 Talk Track
+
+What we are doing:
+We are provisioning the database and connecting the backend to a persistent MySQL instance.
+
+Why we are doing it:
+The project requires persistence for survey CRUD operations, and using RDS gives us managed relational storage that works cleanly with the deployed backend.
+
+### Phase 5 Talk Track
+
+What we are doing:
+We are deploying both applications to Kubernetes with Helm and exposing them through a single ingress path.
+
+Why we are doing it:
+Helm gives us reusable deployment configuration, Kubernetes manages the running containers, and the ingress gives us one public entry point for both the frontend and the backend API.
+
+### AWS Talk Track
+
+What we are doing:
+We are using ECR for image storage, EKS for Kubernetes, RDS for MySQL, and an ingress load balancer with Elastic IPs for public access.
+
+Why we are doing it:
+Each AWS service maps to one deployment need: image hosting, orchestration, persistence, and network exposure. The Elastic IPs are used only at the public load balancer layer, where stable public addresses actually matter.
+
+### Verification Talk Track
+
+What we are doing:
+We are verifying the deployment through the browser and through live API requests.
+
+Why we are doing it:
+This proves the system is not only deployed, but functionally working end to end, including storage, routing, and public access.
+
+### Teardown Talk Track
+
+What we are doing:
+We are documenting how to remove the AWS resources after practice.
+
+Why we are doing it:
+Cloud resources continue billing until they are deleted, so teardown is part of a responsible and reproducible deployment workflow.
+
 ## Working Agreement For This Practice Run
 
 1. Codex will do as much implementation work as possible inside this project folder.
